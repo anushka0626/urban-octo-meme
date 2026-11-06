@@ -8,7 +8,7 @@
 // Needs GUESTBOOK_ADMIN_TOKEN in .env (the same value you set on Vercel),
 // and SITE_URL (defaults to the live site in astro.config.mjs; use http://localhost:4321 for dev).
 const token = process.env.GUESTBOOK_ADMIN_TOKEN;
-const site = (process.env.SITE_URL ?? 'https://anushkakhot.vercel.app').replace(/\/$/, '');
+const site = (process.env.SITE_URL ?? 'https://anushkaaaa.vercel.app').replace(/\/$/, '');
 if (!token) {
   console.error('Set GUESTBOOK_ADMIN_TOKEN in .env first (see README).');
   process.exit(1);

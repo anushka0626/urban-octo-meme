@@ -4,7 +4,7 @@ import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   // Replace with your real domain once it's connected (used for canonical/OG URLs).
-  site: 'https://anushkakhot.vercel.app',
+  site: 'https://anushkaaaa.vercel.app',
   // Every page is prerendered; only the small /api/* routes run as Vercel functions.
   output: 'static',
   adapter: vercel(),
