@@ -1,0 +1,62 @@
+---
+import { site } from '../data/site';
+const ticks = Array.from({ length: 12 }, (_, i) => i * 30);
+---
+
+<aside class="gadgets" aria-label="Desktop gadgets">
+  <button class="clock-gadget" type="button" id="clock-gadget" aria-label="Clock (click me)" title="click me">
+    <svg viewBox="0 0 120 120" aria-hidden="true">
+      <defs>
+        <radialGradient id="cg-face" cx=".4" cy=".3" r=".8">
+          <stop offset="0" stop-color="#ffffff" />
+          <stop offset=".7" stop-color="#eef3ff" />
+          <stop offset="1" stop-color="#d4defa" />
+        </radialGradient>
+        <linearGradient id="cg-rim" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ffd6ec" />
+          <stop offset=".5" stop-color="#c9b8ff" />
+          <stop offset="1" stop-color="#8fc6ff" />
+        </linearGradient>
+        <linearGradient id="cg-gloss" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#fff" stop-opacity=".9" />
+          <stop offset="1" stop-color="#fff" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+      <circle cx="60" cy="60" r="56" fill="url(#cg-rim)" stroke="#6b78b0" stroke-width="1.5" />
+      <circle cx="60" cy="60" r="47" fill="url(#cg-face)" stroke="#8090c0" />
+      {ticks.map((a) => <rect x="58.5" y="17" width="3" height={a % 90 === 0 ? 8 : 5} fill="#5b6b95" transform={`rotate(${a} 60 60)`} />)}
+      <text x="60" y="92" text-anchor="middle" font-family="Pixelify Sans, monospace" font-size="9" fill="#d9418a">anushka</text>
+      <rect class="hand" id="cg-h" x="57.5" y="34" width="5" height="28" rx="2.5" fill="#1d2433" />
+      <rect class="hand" id="cg-m" x="58.5" y="24" width="3" height="38" rx="1.5" fill="#3a4466" />
+      <rect class="hand" id="cg-s" x="59.25" y="20" width="1.5" height="48" fill="#ff5c9a" />
+      <circle cx="60" cy="60" r="4" fill="#ff5c9a" stroke="#fff" stroke-width="1.5" />
+      <ellipse cx="60" cy="36" rx="38" ry="22" fill="url(#cg-gloss)" opacity=".6" />
+    </svg>
+  </button>
+  <a class="np" id="np" href="/music" data-state="idle" aria-label={`Music: ${site.spotify.playlist.name}`}>
+    <span class="np-head pixel"><span aria-hidden="true">♪</span> what i'm listening to</span>
+    <span class="np-body">
+      <span class="np-art">
+        <img id="np-fallback" src="/pixels/cassette.svg" alt="" width="44" height="44" />
+        <canvas id="np-canvas" width="20" height="20" hidden></canvas>
+      </span>
+      <span class="np-screen">
+        <span class="np-label pixel" id="np-label">nothing playing rn</span>
+        <span class="np-marquee"><span id="np-title">{site.spotify.playlist.name}</span></span>
+        <span class="np-artist" id="np-artist">a playlist I love</span>
+      </span>
+    </span>
+    <span class="np-foot">
+      <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+      <span class="np-spotify"><span class="dot" aria-hidden="true"></span>Spotify</span>
+    </span>
+  </a>
+  <a class="gh" id="gh" href={`https://github.com/${site.github}`} target="_blank" rel="noopener" hidden>
+    <span class="gh-head pixel"><span aria-hidden="true">🌱</span> commit garden</span>
+    <span class="gh-grid" id="gh-grid" aria-hidden="true"></span>
+    <span class="gh-foot"><span><b id="gh-total">0</b> contributions</span><span id="gh-streak"></span></span>
+  </a>
+  <div class="sticky" role="note">
+    {site.stickyNote.map((l) => <p>{l}</p>)}
+  </div>
+</aside>

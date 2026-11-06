@@ -1,0 +1,32 @@
+import { initBoot } from './boot';
+import { initStartMenu } from './startmenu';
+import { initWM } from './wm';
+import { initTerminal } from './terminal';
+import { initApps } from './apps';
+import { initMusic } from './music';
+import { initPersonalize } from './personalize';
+import { initScreensaver } from './screensaver';
+import { initSeasonal } from './seasonal';
+import { initGithub } from './github';
+import { initGuestbook } from './guestbook';
+import { initArcade } from './arcade';
+import { initSweeper } from './sweeper';
+import { initClockFlyout } from './clockflyout';
+import { initTrail } from './trail';
+
+// Order matters for Escape handling: boot, start menu and clock flyout get first dibs before the WM.
+initBoot();
+initStartMenu();
+initClockFlyout();
+initWM();
+initTerminal();
+initApps();
+initMusic();
+initPersonalize();
+initScreensaver();
+initSeasonal();
+initGithub();
+initGuestbook();
+initArcade();
+initSweeper();
+initTrail();

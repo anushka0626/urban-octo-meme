@@ -1,0 +1,32 @@
+---
+import Window from '../Window.astro';
+const { open, notes } = Astro.props as {
+  open?: boolean;
+  notes: { title: string; summary: string; url: string; date: Date }[];
+};
+const fmt = (d: Date) => d.toISOString().slice(0, 10);
+---
+
+<Window id="writing" title="Writing - Notepad" icon="notepad" url="/writing" open={open} w={620} h={500}>
+  <div class="notepad-menu" slot="toolbar" aria-hidden="true" style="border-radius:2px 2px 0 0">
+    <span>File</span><span>Edit</span><span>Format</span><span>View</span><span>Help</span>
+  </div>
+  <div class="page">
+    <p class="eyebrow">notes.txt</p>
+    <h1>Writing</h1>
+    <p class="lede">Notes, thoughts and things I learned the hard way.</p>
+    <ul class="notes-list">
+      {
+        notes.map((n) => (
+          <li>
+            <a href={n.url}>
+              <time datetime={fmt(n.date)}>{fmt(n.date)}</time>
+              <h3>{n.title}</h3>
+              <p>{n.summary}</p>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Window>

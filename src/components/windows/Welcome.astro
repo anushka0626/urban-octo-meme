@@ -1,0 +1,48 @@
+---
+import Window from '../Window.astro';
+import { site } from '../../data/site';
+const { open } = Astro.props;
+
+const tiles = [
+  { href: '/projects', icon: 'folder', label: 'Projects', note: 'Things I have built' },
+  { href: '/resume', icon: 'resume', label: 'Résumé', note: 'The one-page version of me' },
+  { href: '/research', icon: 'research', label: 'Research', note: 'Questions I am chasing' },
+  { href: '/about', icon: 'user', label: 'About me', note: 'From Purble Place to Linux' },
+  { href: '/experience', icon: 'briefcase', label: 'Experience', note: 'Where I have worked' },
+  { href: '/contact', icon: 'mail', label: 'Contact', note: 'Say hi — I reply!' },
+];
+---
+
+<Window id="welcome" title="Welcome Center" icon="orb" url="/" open={open} w={680} h={610}>
+  <div class="welcome-head">
+    <img class="avatar" src="/avatar.svg" alt="" width="84" height="84" />
+    <div>
+      <p class="eyebrow">hello, world!</p>
+      <h1>Hi, I'm {site.firstName}.</h1>
+      <p>{site.tagline}</p>
+    </div>
+  </div>
+  <div class="page wide">
+    <p class="lede" style="font-size:15px">
+      This is my little corner of the internet, styled after the first computer I ever used. Click around like it's
+      2010, or jump straight to the good stuff:
+    </p>
+    <nav class="tiles" aria-label="Main sections">
+      {
+        tiles.map((t) => (
+          <a class="tile" href={t.href}>
+            <img src={`/icons/${t.icon}.svg`} alt="" width="40" height="40" />
+            <span>
+              <b>{t.label}</b>
+              <small>{t.note}</small>
+            </span>
+          </a>
+        ))
+      }
+    </nav>
+    <div class="welcome-foot">
+      <span>tip: try the <a href="/terminal">terminal</a>, right-click the desktop, or sign the <a href="/guestbook">guestbook</a>.</span>
+      <label><input type="checkbox" id="welcome-startup" checked /> Show this at startup</label>
+    </div>
+  </div>
+</Window>

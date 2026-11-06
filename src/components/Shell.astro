@@ -1,0 +1,315 @@
+---
+// The whole "desktop". Every route renders this with a different window open,
+// so each window has a real, shareable, crawlable URL.
+import '../styles/tokens.css';
+import '../styles/aero.css';
+import '../styles/content.css';
+import { getCollection, render } from 'astro:content';
+import { site } from '../data/site';
+import Boot from './Boot.astro';
+import Taskbar from './Taskbar.astro';
+import Gadgets from './Gadgets.astro';
+import Welcome from './windows/Welcome.astro';
+import About from './windows/About.astro';
+import Explorer from './windows/Explorer.astro';
+import Detail from './windows/Detail.astro';
+import Experience from './windows/Experience.astro';
+import Resume from './windows/Resume.astro';
+import Contact from './windows/Contact.astro';
+import Writing from './windows/Writing.astro';
+import Terminal from './windows/Terminal.astro';
+import RecycleBin from './windows/RecycleBin.astro';
+import Game from './windows/Game.astro';
+import Music from './windows/Music.astro';
+import Guestbook from './windows/Guestbook.astro';
+import Personalize from './windows/Personalize.astro';
+import Sweeper from './windows/Sweeper.astro';
+import Dashboard from './windows/Dashboard.astro';
+import { TINTS, DEFAULT_PREFS } from '../data/prefs';
+
+interface Props {
+  open: string; // window id to show on load
+}
+const { open } = Astro.props;
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const research = (await getCollection('research')).sort((a, b) => a.data.order - b.data.order);
+const notes = (await getCollection('writing')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const projectWins = await Promise.all(
+  projects.map(async (p) => ({ entry: p, id: `project-${p.id}`, url: `/projects/${p.id}`, ...(await render(p)) })),
+);
+const researchWins = await Promise.all(
+  research.map(async (r) => ({ entry: r, id: `research-${r.id}`, url: `/research/${r.id}`, ...(await render(r)) })),
+);
+const noteWins = await Promise.all(
+  notes.map(async (n) => ({ entry: n, id: `note-${n.id}`, url: `/writing/${n.id}`, ...(await render(n)) })),
+);
+
+const linkList = (l: { github?: string; demo?: string; paper?: string; other?: string }) =>
+  [
+    l.demo && { label: 'Live demo', href: l.demo },
+    l.github && { label: 'Source on GitHub', href: l.github },
+    l.paper && { label: 'Paper / report', href: l.paper },
+    l.other && { label: 'More', href: l.other },
+  ].filter(Boolean) as { label: string; href: string }[];
+
+// Registry of every window: used for <title>, routing, search and the terminal.
+type Reg = { id: string; url: string; title: string; icon: string; kind: string; summary: string };
+const registry: Reg[] = [
+  { id: 'welcome', url: '/', title: 'Welcome Center', icon: 'orb', kind: 'Program', summary: site.tagline },
+  { id: 'about', url: '/about', title: 'About Me', icon: 'user', kind: 'Folder', summary: 'Who I am and how I got here' },
+  { id: 'projects', url: '/projects', title: 'Projects', icon: 'folder', kind: 'Folder', summary: 'Things I have built' },
+  { id: 'research', url: '/research', title: 'Research', icon: 'research', kind: 'Folder', summary: 'Questions I am exploring' },
+  { id: 'experience', url: '/experience', title: 'Experience', icon: 'briefcase', kind: 'Folder', summary: 'Where I have worked' },
+  { id: 'resume', url: '/resume', title: 'Résumé', icon: 'resume', kind: 'Document', summary: 'One-page résumé + PDF download' },
+  { id: 'contact', url: '/contact', title: 'Contact', icon: 'mail', kind: 'Program', summary: 'Email and socials' },
+  { id: 'writing', url: '/writing', title: 'Writing', icon: 'notepad', kind: 'Folder', summary: 'Notes and posts' },
+  { id: 'terminal', url: '/terminal', title: 'Terminal', icon: 'terminal', kind: 'Program', summary: 'A tiny shell' },
+  { id: 'recycle', url: '/recycle-bin', title: 'Recycle Bin', icon: 'recycle', kind: 'Folder', summary: 'Abandoned ideas' },
+  { id: 'games', url: '/games', title: 'Pixel Pairs', icon: 'game', kind: 'Game', summary: 'A tiny memory game' },
+  { id: 'music', url: '/music', title: 'Media Player', icon: 'music', kind: 'Program', summary: 'What I am listening to on Spotify' },
+  { id: 'sweeper', url: '/sweeper', title: 'Pixel Sweeper', icon: 'sweeper', kind: 'Game', summary: 'Minesweeper with flowers' },
+  { id: 'dashboard', url: '/dashboard', title: 'Visitor Dashboard', icon: 'dashboard', kind: 'Program', summary: 'Hit counter, visitors and the hall of fame' },
+  { id: 'guestbook', url: '/guestbook', title: 'Guestbook', icon: 'guestbook', kind: 'Program', summary: 'Leave a note or a pixel drawing' },
+  { id: 'personalize', url: '/personalize', title: 'Personalization', icon: 'personalize', kind: 'Settings', summary: 'Window colour, wallpaper, screensaver, sounds, cursor' },
+  ...projectWins.map((p) => ({ id: p.id, url: p.url, title: p.entry.data.title, icon: p.entry.data.icon, kind: 'Project', summary: p.entry.data.summary })),
+  ...researchWins.map((r) => ({ id: r.id, url: r.url, title: r.entry.data.title, icon: 'research', kind: 'Research', summary: r.entry.data.summary })),
+  ...noteWins.map((n) => ({ id: n.id, url: n.url, title: n.entry.data.title, icon: 'notepad', kind: 'Note', summary: n.entry.data.summary })),
+];
+
+const current = registry.find((r) => r.id === open) ?? registry[0];
+const pageTitle = current.id === 'welcome' ? site.title : `${current.title} · ${site.name}`;
+const pageDesc = current.id === 'welcome' ? site.description : current.summary;
+
+const clientData = {
+  site: { name: site.name, title: site.title, firstName: site.firstName, handle: site.handle, host: site.host, email: site.email, resumePdf: site.resumePdf, socials: site.socials, spotify: site.spotify, github: site.github, birthday: site.birthday },
+  windows: registry,
+  terminal: {
+    projects: projectWins.map((p) => ({ slug: p.entry.id, title: p.entry.data.title, summary: p.entry.data.summary, tech: p.entry.data.tech, id: p.id })),
+    research: researchWins.map((r) => ({ slug: r.entry.id, title: r.entry.data.title, summary: r.entry.data.summary, tech: r.entry.data.tags, id: r.id })),
+    writing: noteWins.map((n) => ({ slug: n.entry.id, title: n.entry.data.title, summary: n.entry.data.summary, tech: [], id: n.id })),
+  },
+};
+
+const icons = [
+  { id: 'about', label: 'About Me', icon: 'user', href: '/about' },
+  { id: 'projects', label: 'Projects', icon: 'folder', href: '/projects' },
+  { id: 'research', label: 'Research', icon: 'research', href: '/research' },
+  { id: 'experience', label: 'Experience', icon: 'briefcase', href: '/experience' },
+  { id: 'resume', label: 'Résumé.pdf', icon: 'resume', href: '/resume' },
+  { id: 'writing', label: 'Writing', icon: 'notepad', href: '/writing' },
+  { id: 'contact', label: 'Contact', icon: 'mail', href: '/contact' },
+  { id: 'terminal', label: 'Terminal', icon: 'terminal', href: '/terminal' },
+  { id: 'guestbook', label: 'Guestbook', icon: 'guestbook', href: '/guestbook' },
+  { id: 'games', label: 'Pixel Pairs', icon: 'game', href: '/games' },
+  { id: 'sweeper', label: 'Pixel Sweeper', icon: 'sweeper', href: '/sweeper' },
+  { id: 'dashboard', label: 'Dashboard', icon: 'dashboard', href: '/dashboard' },
+  { id: 'recycle', label: 'Recycle Bin', icon: 'recycle', href: '/recycle-bin' },
+];
+
+const showBoot = open === 'welcome';
+const canonical = new URL(current.url, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDesc} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#3a8ee6" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDesc} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/og.png', Astro.site).href} />
+    <meta name="twitter:card" content="summary_large_image" />
+    {
+      showBoot && (
+        <script is:inline>
+          try {
+            if (!sessionStorage.getItem('booted') && !matchMedia('(prefers-reduced-motion: reduce)').matches)
+              document.documentElement.classList.add('booting');
+          } catch (e) {}
+        </script>
+      )
+    }
+  </head>
+  <body>
+    <script is:inline define:vars={{ tints: TINTS, defaults: DEFAULT_PREFS }}>
+      // apply Personalize settings before first paint (mirrors src/scripts/prefs.ts)
+      var r = document.documentElement;
+      try {
+        var p = Object.assign({}, defaults, JSON.parse(localStorage.getItem('prefs') || '{}'));
+        var t = tints[p.tint] || tints.sky;
+        r.style.setProperty('--glass-tint', t.glass);
+        r.style.setProperty('--bar-tint', t.bar);
+        r.style.setProperty('--glass-alpha', String(p.alpha));
+        if (!p.glass) r.classList.add('no-glass');
+        if (p.cursor) r.classList.add('pixel-cursor');
+      } catch (e) {
+        r.classList.add('pixel-cursor');
+      }
+    </script>
+    <script is:inline>
+      try {
+        var wp = localStorage.getItem('wallpaper');
+        if (wp) document.body.classList.add('wp-' + wp);
+      } catch (e) {}
+    </script>
+    <a class="sr-only" href="#win-resume">Skip to résumé</a>
+    {showBoot && <Boot />}
+
+    <main class="desktop" id="desktop">
+      <h1 class="sr-only">{site.name} — personal website</h1>
+      <ul class="icons" aria-label="Desktop">
+        {
+          icons.map((i) => (
+            <li>
+              <a class="dicon" href={i.href} data-icon-for={i.id}>
+                <img src={`/icons/${i.icon}.svg`} alt="" width="48" height="48" draggable="false" />
+                <span>{i.label}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <Gadgets />
+
+      <div id="windows">
+        <Welcome open={open === 'welcome'} />
+        <About open={open === 'about'} />
+        <Explorer
+          id="projects"
+          title="Projects"
+          icon="folder"
+          url="/projects"
+          open={open === 'projects'}
+          intro="Things I've built — from systems programming to full-stack apps. Click one to open it."
+          items={projectWins.map((p) => ({
+            href: p.url,
+            icon: p.entry.data.icon,
+            title: p.entry.data.title,
+            meta: [p.entry.data.date, p.entry.data.role].filter(Boolean).join(' · '),
+            summary: p.entry.data.summary,
+            chips: p.entry.data.tech,
+          }))}
+        />
+        <Explorer
+          id="research"
+          title="Research"
+          icon="research"
+          url="/research"
+          open={open === 'research'}
+          intro="Questions I'm chasing, papers and experiments."
+          items={researchWins.map((r) => ({
+            href: r.url,
+            icon: 'research',
+            title: r.entry.data.title,
+            meta: [r.entry.data.status, r.entry.data.date].join(' · '),
+            summary: r.entry.data.summary,
+            chips: r.entry.data.tags,
+          }))}
+        />
+        {
+          projectWins.map(({ entry, id, url, Content }) => (
+            <Detail
+              id={id}
+              url={url}
+              open={open === id}
+              title={entry.data.title}
+              icon={entry.data.icon}
+              parent={{ label: 'Projects', href: '/projects', icon: 'folder' }}
+              eyebrow="project"
+              summary={entry.data.summary}
+              facts={[
+                ['when', entry.data.date],
+                ...(entry.data.role ? ([['role', entry.data.role]] as [string, string][]) : []),
+                ['stack', entry.data.tech.slice(0, 3).join(', ')],
+              ]}
+              chips={entry.data.tech}
+              links={linkList(entry.data.links)}
+            >
+              <Content />
+            </Detail>
+          ))
+        }
+        {
+          researchWins.map(({ entry, id, url, Content }) => (
+            <Detail
+              id={id}
+              url={url}
+              open={open === id}
+              title={entry.data.title}
+              icon="research"
+              parent={{ label: 'Research', href: '/research', icon: 'research' }}
+              eyebrow="research"
+              summary={entry.data.summary}
+              facts={[
+                ['status', entry.data.status],
+                ['when', entry.data.date],
+                ...(entry.data.venue ? ([['where', entry.data.venue]] as [string, string][]) : []),
+              ]}
+              chips={entry.data.tags}
+              links={linkList(entry.data.links)}
+            >
+              <Content />
+            </Detail>
+          ))
+        }
+        <Experience open={open === 'experience'} />
+        <Resume
+          open={open === 'resume'}
+          projects={projectWins.map((p) => ({ title: p.entry.data.title, summary: p.entry.data.summary, url: p.url, tech: p.entry.data.tech }))}
+        />
+        <Contact open={open === 'contact'} />
+        <Writing open={open === 'writing'} notes={noteWins.map((n) => ({ title: n.entry.data.title, summary: n.entry.data.summary, url: n.url, date: n.entry.data.date }))} />
+        {
+          noteWins.map(({ entry, id, url, Content }) => (
+            <Detail
+              id={id}
+              url={url}
+              open={open === id}
+              title={entry.data.title}
+              icon="notepad"
+              notepad
+              parent={{ label: 'Writing', href: '/writing', icon: 'notepad' }}
+              eyebrow={entry.data.date.toISOString().slice(0, 10)}
+            >
+              <Content />
+            </Detail>
+          ))
+        }
+        <Terminal open={open === 'terminal'} />
+        <RecycleBin open={open === 'recycle'} />
+        <Game open={open === 'games'} />
+        <Music open={open === 'music'} />
+        <Guestbook open={open === 'guestbook'} />
+        <Personalize open={open === 'personalize'} />
+        <Sweeper open={open === 'sweeper'} />
+        <Dashboard open={open === 'dashboard'} />
+      </div>
+    </main>
+
+    <Taskbar />
+
+    <div class="ctx" id="ctx" role="menu" aria-label="Desktop" hidden>
+      <button type="button" role="menuitem" data-cmd="refresh"><span class="ico"></span>Refresh</button>
+      <button type="button" role="menuitem" data-cmd="wallpaper"><span class="ico"></span>Next desktop background</button>
+      <button type="button" role="menuitem" data-cmd="terminal"><span class="ico"><img src="/icons/terminal.svg" alt="" /></span>Open Terminal here</button>
+      <hr />
+      <button type="button" role="menuitem" data-cmd="guestbook"><span class="ico"><img src="/icons/guestbook.svg" alt="" /></span>Sign the guestbook</button>
+      <button type="button" role="menuitemcheckbox" data-cmd="gadgets" aria-checked="true"><span class="ico check">✓</span>Gadgets</button>
+      <button type="button" role="menuitem" data-cmd="personalize"><span class="ico"><img src="/icons/personalize.svg" alt="" /></span>Personalize</button>
+    </div>
+
+    <script type="application/json" id="site-data" set:html={JSON.stringify(clientData).replace(/</g, '\\u003c')} />
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>

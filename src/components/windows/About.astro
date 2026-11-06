@@ -1,0 +1,53 @@
+---
+import Window from '../Window.astro';
+import AddressBar from '../AddressBar.astro';
+import { site, about } from '../../data/site';
+const { open } = Astro.props;
+---
+
+<Window id="about" title="About Me" icon="user" url="/about" open={open} w={700} h={580}>
+  <AddressBar slot="toolbar" icon="user" crumbs={[{ label: 'About Me', href: '/about' }]} />
+  <article class="page">
+    <div class="detail-head">
+      <img class="avatar" src="/avatar.svg" alt="" width="84" height="84" />
+      <div>
+        <p class="eyebrow">about.txt</p>
+        <h1>{site.name}</h1>
+        <p class="lede">{about.intro}</p>
+      </div>
+    </div>
+
+    <h2>How I got here</h2>
+    <ol class="timeline">
+      {
+        about.story.map((s) => (
+          <li>
+            <span class="yr">{s.year}</span>
+            <div>
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <h2>Quick facts</h2>
+    <dl class="factlist">
+      {
+        about.facts.map(([k, v]) => (
+          <>
+            <dt>{k}</dt>
+            <dd>{v}</dd>
+          </>
+        ))
+      }
+    </dl>
+
+    <div class="btn-row">
+      <a class="btn primary" href="/projects"><img src="/icons/folder.svg" alt="" />See my projects</a>
+      <a class="btn" href="/resume"><img src="/icons/resume.svg" alt="" />Résumé</a>
+      <a class="btn" href="/contact"><img src="/icons/mail.svg" alt="" />Contact</a>
+    </div>
+  </article>
+</Window>

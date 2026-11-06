@@ -1,0 +1,12 @@
+---
+import { getCollection } from 'astro:content';
+import Shell from '../../components/Shell.astro';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('research');
+  return entries.map((e) => ({ params: { slug: e.id } }));
+}
+const { slug } = Astro.params;
+---
+
+<Shell open={`research-${slug}`} />

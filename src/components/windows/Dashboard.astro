@@ -1,0 +1,290 @@
+---
+import Window from '../Window.astro';
+const { open } = Astro.props;
+---
+
+<Window id="dashboard" title="Visitor Dashboard" icon="dashboard" url="/dashboard" open={open} w={720} h={600}>
+  <div class="dash">
+    <section class="dash-hero">
+      <p class="pixel dash-label">you are visitor no.</p>
+      <div class="hit" id="dash-you" aria-live="polite"><span>0</span><span>0</span><span>0</span><span>0</span><span>0</span><span>0</span></div>
+      <p class="muted dash-sub">a real hit counter, like it's 2009 ✿</p>
+    </section>
+
+    <div class="dash-tiles">
+      <div class="dash-tile"><b id="dash-today">–</b><span>visitors today</span></div>
+      <div class="dash-tile"><b id="dash-total">–</b><span>visitors, all time</span></div>
+      <div class="dash-tile"><b id="dash-plays">–</b><span>games played</span></div>
+      <div class="dash-tile"><b id="dash-notes">–</b><span>guestbook notes</span></div>
+    </div>
+
+    <div class="dash-cols">
+      <section class="dash-card">
+        <h3>Visitors, last 7 days</h3>
+        <div class="bars" id="dash-week" role="img" aria-label="Visitors per day for the last 7 days"></div>
+        <div class="bar-labels" id="dash-days" aria-hidden="true"></div>
+        <table class="sr-only" id="dash-week-table"><caption>Visitors per day</caption><tbody></tbody></table>
+      </section>
+      <section class="dash-card">
+        <h3>Visiting from</h3>
+        <ul class="countries" id="dash-countries"><li class="muted">no data yet</li></ul>
+      </section>
+    </div>
+
+    <h2 class="dash-h2">🏆 Hall of fame</h2>
+    <div class="dash-cols">
+      <section class="dash-card">
+        <h3><img src="/icons/sweeper.svg" alt="" width="18" height="18" /> Pixel Sweeper <small>fastest</small></h3>
+        <ol class="hof" id="hof-sweeper"><li class="muted">be the first! <a href="/sweeper">play →</a></li></ol>
+      </section>
+      <section class="dash-card">
+        <h3><img src="/icons/game.svg" alt="" width="18" height="18" /> Pixel Pairs <small>fewest moves</small></h3>
+        <ol class="hof" id="hof-pairs"><li class="muted">be the first! <a href="/games">play →</a></li></ol>
+      </section>
+    </div>
+    <p class="muted dash-foot" id="dash-status">Only counts and countries are stored. No cookies, no tracking.</p>
+  </div>
+</Window>
+
+<style is:global>
+  .dash {
+    min-height: 100%;
+    padding: 18px 20px 24px;
+    font-family: var(--font-body);
+    background:
+      radial-gradient(circle at 100% 0, rgba(201, 184, 255, 0.35), transparent 40%),
+      linear-gradient(#fbfaff, #f2f6ff);
+  }
+  .dash-hero {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .dash-label {
+    margin: 0 0 6px;
+    color: var(--pink-deep);
+    font-size: 15px;
+  }
+  .hit {
+    display: inline-flex;
+    gap: 3px;
+    padding: 6px;
+    border-radius: 6px;
+    background: #2a2f45;
+    box-shadow:
+      inset 0 2px 6px rgba(0, 0, 0, 0.6),
+      0 0 0 2px #c9b8ff;
+  }
+  .hit span {
+    width: 30px;
+    padding: 2px 0;
+    border-radius: 3px;
+    background: linear-gradient(#111522 50%, #1b2033 50%);
+    color: #7be495;
+    font-family: var(--font-pixel);
+    font-size: 30px;
+    line-height: 1.1;
+    text-align: center;
+    text-shadow: 0 0 8px rgba(123, 228, 149, 0.7);
+  }
+  .dash-sub {
+    margin: 6px 0 0;
+    font-size: 12.5px;
+  }
+  .dash-tiles {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .dash-tile {
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+  }
+  .dash-tile b {
+    display: block;
+    font-size: 24px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .dash-tile span {
+    font-size: 12.5px;
+    color: var(--ink-faint);
+  }
+  .dash-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .dash-card {
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    min-width: 0;
+  }
+  .dash-card h3 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 10px;
+    font-size: 13.5px;
+  }
+  .dash-card h3 small {
+    margin-left: auto;
+    font-weight: 400;
+    color: var(--ink-faint);
+    font-size: 12px;
+  }
+  .dash-h2 {
+    margin: 20px 0 10px;
+    font-size: 17px;
+  }
+  .bars {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    align-items: end;
+    height: 130px;
+    padding-top: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .bar {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    height: 100%;
+  }
+  .bar i {
+    display: block;
+    width: 70%;
+    max-width: 26px;
+    min-height: 2px;
+    border-radius: 4px 4px 0 0;
+    background: #9f88f0;
+  }
+  .bar:hover i {
+    background: #7a5fe0;
+  }
+  .bar b {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 2px;
+  }
+  .bar-labels {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-top: 4px;
+    font-family: var(--font-pixel);
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    text-align: center;
+  }
+  .countries,
+  .hof {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 13.5px;
+  }
+  .countries li {
+    display: grid;
+    grid-template-columns: 22px 1fr auto;
+    align-items: end;
+    gap: 8px;
+    padding: 3px 0;
+  }
+  .countries li.muted {
+    display: block;
+  }
+  .countries .c-main {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+  .countries b {
+    font-size: 12.5px;
+    font-weight: 600;
+  }
+  .countries .meter {
+    height: 8px;
+    border-radius: 4px;
+    background: #efeaff;
+    overflow: hidden;
+  }
+  .countries .meter i {
+    display: block;
+    height: 100%;
+    border-radius: 4px;
+    background: #9f88f0;
+  }
+  .countries .nm {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+  .hof {
+    counter-reset: hof;
+  }
+  .hof li {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .hof li:not(.muted)::before {
+    counter-increment: hof;
+    content: counter(hof);
+    width: 22px;
+    font-family: var(--font-pixel);
+    color: var(--ink-faint);
+  }
+  .hof li:nth-child(1)::before {
+    content: '🥇';
+  }
+  .hof li:nth-child(2)::before {
+    content: '🥈';
+  }
+  .hof li:nth-child(3)::before {
+    content: '🥉';
+  }
+  .hof .who {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .hof .sc {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+  .hof li.me {
+    background: #fff4fa;
+  }
+  .dash-foot {
+    margin: 16px 0 0;
+    font-size: 12px;
+    text-align: center;
+  }
+  @media (max-width: 768px) {
+    .dash-tiles {
+      grid-template-columns: 1fr 1fr;
+    }
+    .dash-cols {
+      grid-template-columns: 1fr;
+    }
+    .hit span {
+      width: 24px;
+      font-size: 24px;
+    }
+  }
+</style>

@@ -1,0 +1,93 @@
+---
+// Case-study style window for a single project / research entry / note.
+import Window from '../Window.astro';
+import AddressBar from '../AddressBar.astro';
+
+interface Props {
+  id: string;
+  title: string;
+  icon: string;
+  url: string;
+  open?: boolean;
+  parent: { label: string; href: string; icon: string };
+  eyebrow?: string;
+  summary?: string;
+  facts?: [string, string][];
+  chips?: string[];
+  links?: { label: string; href: string }[];
+  notepad?: boolean;
+}
+const { id, title, icon, url, open, parent, eyebrow, summary, facts = [], chips = [], links = [], notepad } = Astro.props;
+---
+
+<Window id={id} title={notepad ? `${title}.txt - Notepad` : title} icon={icon} url={url} open={open} w={760} h={580}>
+  {
+    notepad ? (
+      <div class="notepad-menu" slot="toolbar" aria-hidden="true" style="border-radius:2px 2px 0 0">
+        <span>File</span>
+        <span>Edit</span>
+        <span>Format</span>
+        <span>View</span>
+        <span>Help</span>
+      </div>
+    ) : (
+      <AddressBar
+        slot="toolbar"
+        icon={parent.icon}
+        back={parent.href}
+        crumbs={[
+          { label: parent.label, href: parent.href },
+          { label: title, href: url },
+        ]}
+      />
+    )
+  }
+  <article class="page">
+    <div class="detail-head">
+      {!notepad && <img src={`/icons/${icon}.svg`} alt="" width="56" height="56" />}
+      <div>
+        {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+        <h1>{title}</h1>
+        {summary && <p class="lede">{summary}</p>}
+      </div>
+    </div>
+    {
+      facts.length > 0 && (
+        <dl class="facts">
+          {facts.map(([k, v]) => (
+            <div>
+              <dt>{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))}
+        </dl>
+      )
+    }
+    {
+      chips.length > 0 && (
+        <ul class="chips" style="margin-bottom:18px">
+          {chips.map((c) => (
+            <li class="chip">{c}</li>
+          ))}
+        </ul>
+      )
+    }
+    {
+      links.length > 0 && (
+        <div class="btn-row">
+          {links.map((l, i) => (
+            <a class:list={['btn', { primary: i === 0 }]} href={l.href} target="_blank" rel="noopener">
+              {l.label} ↗
+            </a>
+          ))}
+        </div>
+      )
+    }
+    <div class="prose">
+      <slot />
+    </div>
+    <div class="btn-row" style="margin-top:28px">
+      <a class="btn" href={parent.href}>← Back to {parent.label}</a>
+    </div>
+  </article>
+</Window>

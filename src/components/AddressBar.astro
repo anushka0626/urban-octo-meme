@@ -1,0 +1,34 @@
+---
+// Explorer-style toolbar: back button, breadcrumb address bar, optional filter box.
+interface Crumb {
+  label: string;
+  href: string;
+}
+interface Props {
+  icon: string;
+  crumbs: Crumb[];
+  back?: string; // parent URL
+  filter?: string; // placeholder text -> renders a search box that filters .card[data-q]
+}
+const { icon, crumbs, back, filter } = Astro.props;
+---
+
+<div class="win-toolbar">
+  <div class="win-nav">
+    <button type="button" data-back={back} disabled={!back} aria-label="Back" title="Back">◀</button>
+  </div>
+  <nav class="win-addr" aria-label="Location">
+    <img src={`/icons/${icon}.svg`} alt="" width="16" height="16" />
+    <span class="sep" aria-hidden="true">▸</span>
+    <a href="/">{'Anushka'}</a>
+    {
+      crumbs.map((c) => (
+        <>
+          <span class="sep" aria-hidden="true">▸</span>
+          <a href={c.href}>{c.label}</a>
+        </>
+      ))
+    }
+  </nav>
+  {filter && <input class="win-search" type="search" data-filter placeholder={filter} aria-label={filter} />}
+</div>

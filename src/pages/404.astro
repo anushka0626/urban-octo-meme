@@ -1,0 +1,96 @@
+---
+import '../styles/tokens.css';
+import { site } from '../data/site';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>404 · {site.name}</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="robots" content="noindex" />
+  </head>
+  <body>
+    <main class="bsod">
+      <p class="face" aria-hidden="true">:(</p>
+      <h1>Your browser ran into a page that doesn't exist.</h1>
+      <p>
+        We're just collecting some nostalgia, and then we'll take you back home. <span class="pct" id="pct">0</span>%
+        complete
+      </p>
+      <div class="row">
+        <img src="/pixels/cursor.svg" alt="" width="64" height="64" />
+        <div>
+          <p class="small">For more information about this issue and possible fixes, visit the desktop.</p>
+          <p class="small">If you call a support person, give them this info:<br />Stop code: PAGE_NOT_FOUND_0x404</p>
+          <p><a href="/">← Back to the desktop</a></p>
+        </div>
+      </div>
+    </main>
+    <script is:inline>
+      var p = 0,
+        el = document.getElementById('pct');
+      var t = setInterval(function () {
+        p = Math.min(100, p + Math.ceil(Math.random() * 12));
+        el.textContent = p;
+        if (p >= 100) {
+          clearInterval(t);
+        }
+      }, 400);
+    </script>
+    <style>
+      body {
+        overflow: auto;
+        background: linear-gradient(160deg, #7fb6ff, #a99cff 60%, #ffa8d5);
+        color: #fff;
+        font-family: var(--font-ui);
+      }
+      .bsod {
+        max-width: 760px;
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 12vh 24px 40px;
+      }
+      .face {
+        margin: 0 0 24px;
+        font-size: clamp(80px, 14vw, 140px);
+        line-height: 1;
+        font-weight: 300;
+      }
+      h1 {
+        margin: 0 0 18px;
+        font-size: clamp(22px, 3.4vw, 30px);
+        font-weight: 400;
+        line-height: 1.35;
+      }
+      p {
+        font-size: 17px;
+        line-height: 1.5;
+      }
+      .row {
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
+        margin-top: 40px;
+      }
+      .row img {
+        flex: none;
+        image-rendering: pixelated;
+        background: #fff;
+        padding: 6px;
+        border-radius: 4px;
+      }
+      .small {
+        font-size: 13.5px;
+        margin: 0 0 10px;
+        opacity: 0.95;
+      }
+      a {
+        color: #fff;
+        font-weight: 600;
+      }
+    </style>
+  </body>
+</html>

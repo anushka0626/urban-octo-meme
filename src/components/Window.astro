@@ -1,0 +1,41 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  icon: string; // file in /public/icons, without extension
+  url: string;
+  open?: boolean;
+  w?: number;
+  h?: number;
+  dark?: boolean;
+}
+const { id, title, icon, url, open = false, w = 720, h = 520, dark = false } = Astro.props;
+---
+
+<section
+  class="win"
+  id={`win-${id}`}
+  data-win={id}
+  data-url={url}
+  data-title={title}
+  data-icon={icon}
+  role="dialog"
+  aria-labelledby={`win-${id}-title`}
+  hidden={!open}
+  style={`--w:${w}px;--h:${h}px`}
+>
+  <header class="win-titlebar">
+    <img class="win-icon" src={`/icons/${icon}.svg`} alt="" width="16" height="16" />
+    <h2 class="win-title" id={`win-${id}-title`}>{title}</h2>
+    <div class="win-controls">
+      <button class="wc wc-min" type="button" data-action="min" aria-label="Minimize" title="Minimize"></button>
+      <button class="wc wc-max" type="button" data-action="max" aria-label="Maximize" title="Maximize"></button>
+      <a class="wc wc-close" href="/" data-action="close" aria-label="Close" title="Close"></a>
+    </div>
+  </header>
+  <slot name="toolbar" />
+  <div class:list={['win-body', { dark }]} tabindex="-1">
+    <slot />
+  </div>
+  <div class="win-resize" aria-hidden="true"></div>
+</section>

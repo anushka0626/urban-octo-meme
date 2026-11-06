@@ -1,0 +1,44 @@
+---
+import Window from '../Window.astro';
+import { site } from '../../data/site';
+const { open } = Astro.props;
+---
+
+<Window id="contact" title="New Message — Contact" icon="mail" url="/contact" open={open} w={620} h={580}>
+  <div class="page">
+    <p class="eyebrow">you've got mail (soon)</p>
+    <h1>Say hi</h1>
+    <p class="lede">
+      Internships, research, collaborations, or just to tell me which Windows 7 game you were obsessed with. I read
+      everything.
+    </p>
+
+    <form class="compose" id="compose" action={`mailto:${site.email}`} method="get" enctype="text/plain">
+      <label><span>To:</span><input type="text" value={`${site.name} <${site.email}>`} readonly tabindex="-1" /></label>
+      <label><span>From:</span><input type="text" name="from" placeholder="Your name" autocomplete="name" /></label>
+      <label><span>Subject:</span><input type="text" name="subject" placeholder="Hello from your website!" /></label>
+      <textarea name="body" aria-label="Message" placeholder="Write your message…"></textarea>
+      <div class="bar">
+        <button class="btn primary" type="submit">✉ Send</button>
+        <span class="muted" style="font-size:12px">opens your mail app</span>
+      </div>
+    </form>
+
+    <h2>Or find me here</h2>
+    <ul class="links-list">
+      {
+        site.socials.map((s) => (
+          <li>
+            <a href={s.url} target={s.url.startsWith('http') ? '_blank' : undefined} rel="noopener">
+              <b>{s.label}</b>
+              <span>{s.handle}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="btn-row">
+      <button class="btn" type="button" data-copy={site.email}>📋 Copy email address</button>
+    </div>
+  </div>
+</Window>

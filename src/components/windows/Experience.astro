@@ -1,0 +1,44 @@
+---
+import Window from '../Window.astro';
+import AddressBar from '../AddressBar.astro';
+import { experience, awards } from '../../data/site';
+const { open } = Astro.props;
+---
+
+<Window id="experience" title="Experience" icon="briefcase" url="/experience" open={open} w={700} h={540}>
+  <AddressBar slot="toolbar" icon="briefcase" crumbs={[{ label: 'Experience', href: '/experience' }]} />
+  <div class="page">
+    <p class="eyebrow">work.log</p>
+    <h1>Experience</h1>
+    <p class="lede">Places I've worked and what I did there.</p>
+    {
+      experience.map((x) => (
+        <section class="xp">
+          <div class="xp-head">
+            <h3>
+              {x.role} · <span style="font-family:inherit;color:var(--aero-deep);font-size:inherit">{x.org}</span>
+            </h3>
+            <span>{x.date}</span>
+          </div>
+          <ul>
+            {x.points.map((p) => (
+              <li>{p}</li>
+            ))}
+          </ul>
+          <ul class="chips">
+            {x.tech.map((t) => (
+              <li class="chip">{t}</li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+    <h2>Awards &amp; fellowships</h2>
+    <ul>
+      {awards.map((a) => <li><b>{a.url ? <a href={a.url}>{a.title}</a> : a.title}:</b> {a.text}</li>)}
+    </ul>
+    <div class="btn-row">
+      <a class="btn primary" href="/resume"><img src="/icons/resume.svg" alt="" />Full résumé</a>
+    </div>
+  </div>
+</Window>

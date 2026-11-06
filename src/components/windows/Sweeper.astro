@@ -1,0 +1,165 @@
+---
+import Window from '../Window.astro';
+const { open } = Astro.props;
+---
+
+<Window id="sweeper" title="Pixel Sweeper" icon="sweeper" url="/sweeper" open={open} w={400} h={560}>
+  <div class="game sweeper">
+    <div class="sw-hud">
+      <span class="sw-lcd" id="sw-left" title="Flowers left">010</span>
+      <button class="sw-face" type="button" id="sw-new" aria-label="New game" title="New game">🙂</button>
+      <span class="sw-lcd" id="sw-time" title="Seconds">000</span>
+    </div>
+    <div class="sw-board" id="sw-board" role="grid" aria-label="Pixel Sweeper board"></div>
+    <div class="sw-tools">
+      <button class="btn" type="button" id="sw-flagmode" aria-pressed="false">🚩 Flag mode</button>
+      <a class="btn" href="/dashboard">🏆 Hall of fame</a>
+    </div>
+    <p class="game-msg" id="sw-msg" aria-live="polite">find the 10 hidden flowers 🌸 · right-click to flag</p>
+    <div class="arcade-submit" id="sw-submit" hidden></div>
+    <noscript>This little game needs JavaScript.</noscript>
+  </div>
+</Window>
+
+<style is:global>
+  .sweeper {
+    gap: 10px;
+  }
+  .sw-hud {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 300px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    background: linear-gradient(#efe9ff, #dcd1ff);
+    box-shadow: inset 0 0 0 1px rgba(122, 95, 224, 0.4);
+  }
+  .sw-lcd {
+    min-width: 56px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: #1f2433;
+    color: #ff9ecf;
+    font-family: var(--font-pixel);
+    font-size: 22px;
+    letter-spacing: 0.08em;
+    text-align: center;
+    text-shadow: 0 0 6px rgba(255, 158, 207, 0.7);
+  }
+  .sw-face {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #7a5fe0;
+    border-radius: 8px;
+    background: linear-gradient(#fff, #e3dcff);
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: inset 0 1px 0 #fff;
+  }
+  .sw-face:active {
+    transform: translateY(1px);
+  }
+  .sw-board {
+    display: grid;
+    grid-template-columns: repeat(9, 30px);
+    gap: 2px;
+    padding: 6px;
+    border-radius: 8px;
+    background: #cfc3f5;
+    user-select: none;
+    touch-action: manipulation;
+  }
+  .sw-cell {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-pixel);
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 50%),
+      linear-gradient(#b9a8f8, #9f88f0);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+      0 2px 0 #7a5fe0;
+  }
+  .sw-cell:hover:not(.open) {
+    filter: brightness(1.08);
+  }
+  .sw-cell.open {
+    background: #fbf9ff;
+    box-shadow: inset 0 0 0 1px #e3dcff;
+    cursor: default;
+  }
+  .sw-cell img {
+    width: 20px;
+    height: 20px;
+    image-rendering: pixelated;
+    pointer-events: none;
+  }
+  .sw-cell.boom {
+    background: #ffd0e5;
+  }
+  .sw-cell[data-n='1'] {
+    color: #3a8ee6;
+  }
+  .sw-cell[data-n='2'] {
+    color: #2f9a52;
+  }
+  .sw-cell[data-n='3'] {
+    color: #d9418a;
+  }
+  .sw-cell[data-n='4'] {
+    color: #5b3f9e;
+  }
+  .sw-cell[data-n='5'],
+  .sw-cell[data-n='6'],
+  .sw-cell[data-n='7'],
+  .sw-cell[data-n='8'] {
+    color: #b8470f;
+  }
+  .sw-tools {
+    display: flex;
+    gap: 8px;
+  }
+  #sw-flagmode[aria-pressed='true'] {
+    border-color: var(--pink-deep);
+    background: linear-gradient(#ffe0ef, #ffc4e0);
+  }
+  .arcade-submit {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-family: var(--font-body);
+    font-size: 13px;
+  }
+  .arcade-submit[hidden] {
+    display: none;
+  }
+  .arcade-submit input {
+    width: 140px;
+    padding: 5px 8px;
+    border: 1px solid #b9a8f8;
+    border-radius: 5px;
+    font: inherit;
+  }
+  @media (max-width: 768px) {
+    .sw-board {
+      grid-template-columns: repeat(9, 32px);
+    }
+    .sw-cell {
+      width: 32px;
+      height: 32px;
+    }
+  }
+</style>

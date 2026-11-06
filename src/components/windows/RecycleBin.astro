@@ -1,0 +1,33 @@
+---
+import Window from '../Window.astro';
+import { recycleBin } from '../../data/site';
+const { open } = Astro.props;
+---
+
+<Window id="recycle" title="Recycle Bin" icon="recycle" url="/recycle-bin" open={open} w={620} h={400}>
+  <div class="win-toolbar" slot="toolbar">
+    <button class="btn" type="button" id="empty-bin" style="padding:3px 12px">Empty Recycle Bin</button>
+    <button class="btn" type="button" id="restore-bin" style="padding:3px 12px">Restore all items</button>
+  </div>
+  <table class="files" id="bin-table">
+    <thead>
+      <tr><th>Name</th><th>Why it's here</th></tr>
+    </thead>
+    <tbody>
+      {
+        recycleBin.map((f) => (
+          <tr>
+            <td>
+              <img src="/icons/notepad.svg" alt="" />
+              {f.name}
+            </td>
+            <td class="muted">{f.note}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+  <p class="muted" id="bin-msg" style="padding:10px 12px;margin:0;font-size:12.5px" aria-live="polite">
+    {recycleBin.length} items · abandoned ideas, kept for sentimental reasons
+  </p>
+</Window>

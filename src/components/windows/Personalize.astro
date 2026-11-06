@@ -1,0 +1,151 @@
+---
+import Window from '../Window.astro';
+import AddressBar from '../AddressBar.astro';
+import { TINTS } from '../../data/prefs';
+const { open } = Astro.props;
+const wallpapers = [
+  { id: 'day', label: 'Daydream' },
+  { id: 'night', label: 'Night sky' },
+  { id: 'candy', label: 'Candy' },
+];
+---
+
+<Window id="personalize" title="Personalization" icon="personalize" url="/personalize" open={open} w={700} h={600}>
+  <AddressBar slot="toolbar" icon="personalize" crumbs={[{ label: 'Control Panel', href: '/personalize' }, { label: 'Personalization', href: '/personalize' }]} />
+  <div class="page wide pz">
+    <h1 style="font-size:22px">Change the visuals and sounds on this computer</h1>
+    <p class="muted" style="margin:0 0 6px;font-size:14px">Make it yours. Settings are saved in your browser only.</p>
+
+    <h2>Desktop background</h2>
+    <div class="pz-walls" role="radiogroup" aria-label="Desktop background">
+      {
+        wallpapers.map((w) => (
+          <button type="button" class="pz-wall" role="radio" data-wall={w.id} aria-checked="false">
+            <img src={`/wallpapers/${w.id}.svg`} alt="" width="150" height="90" loading="lazy" />
+            <span>{w.label}</span>
+          </button>
+        ))
+      }
+    </div>
+
+    <h2>Window colour</h2>
+    <div class="pz-tints" role="radiogroup" aria-label="Window colour">
+      {
+        Object.entries(TINTS).map(([id, t]) => (
+          <button type="button" class="pz-tint" role="radio" data-tint={id} aria-checked="false" title={t.label} style={`--c:${t.glass};--b:${t.bar}`}>
+            <span class="sw" />
+            <span>{t.label}</span>
+          </button>
+        ))
+      }
+    </div>
+    <div class="pz-row">
+      <label><input type="checkbox" id="pz-glass" /> Enable transparency</label>
+      <label class="pz-slider">Colour intensity <input type="range" id="pz-alpha" min="0.15" max="0.8" step="0.01" /></label>
+    </div>
+
+    <h2>Screen saver</h2>
+    <div class="pz-row">
+      <label>
+        <select id="pz-saver">
+          <option value="bubbles">Bubbles</option>
+          <option value="none">(None)</option>
+        </select>
+      </label>
+      <label>Wait <select id="pz-wait"><option value="1">1</option><option value="3">3</option><option value="5">5</option><option value="10">10</option></select> minutes</label>
+      <button type="button" class="btn" id="pz-preview">Preview</button>
+    </div>
+
+    <h2>Sounds &amp; pointer</h2>
+    <div class="pz-row">
+      <label><input type="checkbox" id="pz-sound" /> Play startup sound</label>
+      <button type="button" class="btn" id="pz-test-sound">▶ Test</button>
+      <label><input type="checkbox" id="pz-cursor" /> Pixel mouse pointer</label>
+      <label><input type="checkbox" id="pz-trail" /> Sparkle trail</label>
+    </div>
+
+    <div class="btn-row" style="margin-top:26px">
+      <button type="button" class="btn" id="pz-reset">Restore defaults</button>
+    </div>
+  </div>
+</Window>
+
+<style is:global>
+  .pz h2 {
+    font-size: 15px;
+    margin: 22px 0 10px;
+    color: var(--aero-deep);
+  }
+  .pz-walls,
+  .pz-tints {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .pz-wall,
+  .pz-tint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 6px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: none;
+    font-size: 12.5px;
+    cursor: pointer;
+  }
+  .pz-wall img {
+    display: block;
+    width: 150px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+  }
+  .pz-wall:hover,
+  .pz-tint:hover {
+    background: #eef6fe;
+    border-color: #cfe3f8;
+  }
+  .pz-wall[aria-checked='true'],
+  .pz-tint[aria-checked='true'] {
+    background: linear-gradient(#eaf5ff, #cfe7ff);
+    border-color: #7db7ea;
+  }
+  .pz-tint .sw {
+    width: 46px;
+    height: 34px;
+    border-radius: 6px;
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0) 51%, rgba(255, 255, 255, 0.3)),
+      rgb(var(--c));
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+      0 0 0 1px rgb(var(--b));
+  }
+  .pz-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 22px;
+    font-size: 14px;
+    font-family: var(--font-ui);
+  }
+  .pz-row label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .pz-row select {
+    font: inherit;
+    padding: 3px 6px;
+    border: 1px solid #a8b3c4;
+    border-radius: 3px;
+    background: #fff;
+  }
+  .pz-slider input {
+    width: 150px;
+    accent-color: var(--aero);
+  }
+</style>

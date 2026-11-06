@@ -1,0 +1,74 @@
+---
+// A Windows-Explorer-flavoured folder listing, used for Projects and Research.
+import Window from '../Window.astro';
+import AddressBar from '../AddressBar.astro';
+
+interface Item {
+  href: string;
+  icon: string;
+  title: string;
+  meta: string;
+  summary: string;
+  chips: string[];
+}
+interface Props {
+  id: string;
+  title: string;
+  icon: string;
+  url: string;
+  open?: boolean;
+  intro: string;
+  items: Item[];
+}
+const { id, title, icon, url, open, intro, items } = Astro.props;
+
+const places = [
+  { href: '/', icon: 'orb', label: 'Desktop' },
+  { href: '/projects', icon: 'folder', label: 'Projects' },
+  { href: '/research', icon: 'research', label: 'Research' },
+  { href: '/writing', icon: 'notepad', label: 'Writing' },
+  { href: '/resume', icon: 'resume', label: 'Résumé' },
+];
+---
+
+<Window id={id} title={title} icon={icon} url={url} open={open} w={820} h={560}>
+  <AddressBar slot="toolbar" icon={icon} crumbs={[{ label: title, href: url }]} filter={`Search ${title}`} />
+  <div class="explorer">
+    <nav class="ex-side" aria-label="Places">
+      <p>Favorites</p>
+      {
+        places.map((p) => (
+          <a href={p.href} aria-current={p.href === url ? 'page' : undefined}>
+            <img src={`/icons/${p.icon}.svg`} alt="" />
+            {p.label}
+          </a>
+        ))
+      }
+    </nav>
+    <div class="ex-main">
+      <p class="muted" style="margin:14px 16px 0;font-family:var(--font-body);font-size:14px">{intro}</p>
+      <div class="cards">
+        {
+          items.map((it) => (
+            <a class="card" href={it.href} data-q={`${it.title} ${it.summary} ${it.chips.join(' ')}`.toLowerCase()}>
+              <div class="card-top">
+                <img src={`/icons/${it.icon}.svg`} alt="" width="36" height="36" />
+                <div>
+                  <h3>{it.title}</h3>
+                  <div class="meta">{it.meta}</div>
+                </div>
+              </div>
+              <p>{it.summary}</p>
+              <ul class="chips">
+                {it.chips.map((c) => (
+                  <li class="chip">{c}</li>
+                ))}
+              </ul>
+            </a>
+          ))
+        }
+      </div>
+      <div class="ex-status">{items.length} items</div>
+    </div>
+  </div>
+</Window>

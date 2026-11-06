@@ -1,0 +1,96 @@
+---
+import Window from '../Window.astro';
+import AddressBar from '../AddressBar.astro';
+import { site, experience, awards, education, skills } from '../../data/site';
+const { open, projects } = Astro.props as {
+  open?: boolean;
+  projects: { title: string; summary: string; url: string; tech: string[] }[];
+};
+---
+
+<Window id="resume" title="Résumé.pdf" icon="resume" url="/resume" open={open} w={760} h={600}>
+  <AddressBar slot="toolbar" icon="resume" crumbs={[{ label: 'Résumé.pdf', href: '/resume' }]} />
+  <div class="page">
+    <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start">
+      <div>
+        <h1>{site.name}</h1>
+        <p class="muted" style="margin:0">
+          {site.location} · <a href={`mailto:${site.email}`}>{site.email}</a>
+          {site.socials.filter((s) => s.label !== 'Email').map((s) => <> · <a href={s.url}>{s.label}</a></>)}
+        </p>
+      </div>
+      <a class="btn primary" href={site.resumePdf} download>⬇ Download PDF</a>
+    </div>
+
+    <h2>Education</h2>
+    {
+      education.map((e) => (
+        <section class="xp">
+          <div class="xp-head">
+            <h3>{e.school}</h3>
+            <span>{e.date}</span>
+          </div>
+          <p style="margin:2px 0 0">{e.degree}</p>
+          <p class="muted" style="margin:0;font-size:14px">{e.note}</p>
+        </section>
+      ))
+    }
+
+    <h2>Experience</h2>
+    {
+      experience.map((x) => (
+        <section class="xp">
+          <div class="xp-head">
+            <h3>
+              {x.role}, {x.org}
+            </h3>
+            <span>{x.date}</span>
+          </div>
+          <ul>
+            {x.points.map((p) => (
+              <li>{p}</li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+
+    <h2>Awards &amp; fellowships</h2>
+    <ul>
+      {awards.map((a) => <li><b>{a.url ? <a href={a.url}>{a.title}</a> : a.title}:</b> {a.text}</li>)}
+    </ul>
+
+    <h2>Selected projects</h2>
+    {
+      projects.map((p) => (
+        <section class="xp">
+          <div class="xp-head">
+            <h3>
+              <a href={p.url}>{p.title}</a>
+            </h3>
+            <span>{p.tech.slice(0, 3).join(' · ')}</span>
+          </div>
+          <p class="muted" style="margin:2px 0 0;font-size:14px">{p.summary}</p>
+        </section>
+      ))
+    }
+
+    <h2>Skills</h2>
+    <dl class="skills">
+      {
+        Object.entries(skills).map(([k, v]) => (
+          <>
+            <dt>{k}</dt>
+            <dd>
+              <ul class="chips">
+                {v.map((s) => (
+                  <li class="chip">{s}</li>
+                ))}
+              </ul>
+            </dd>
+          </>
+        ))
+      }
+    </dl>
+  </div>
+</Window>

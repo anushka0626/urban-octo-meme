@@ -1,0 +1,135 @@
+---
+import { site } from '../data/site';
+
+const pinned = [
+  { href: '/', icon: 'orb', label: 'Welcome Center', note: 'Start here' },
+  { href: '/projects', icon: 'folder', label: 'Projects', note: 'Things I have built' },
+  { href: '/research', icon: 'research', label: 'Research', note: 'What I am exploring' },
+  { href: '/resume', icon: 'resume', label: 'Résumé.pdf', note: 'One-page summary' },
+  { href: '/terminal', icon: 'terminal', label: 'Terminal', note: 'For the curious' },
+  { href: '/games', icon: 'game', label: 'Pixel Pairs', note: 'A tiny memory game' },
+  { href: '/sweeper', icon: 'sweeper', label: 'Pixel Sweeper', note: 'Minesweeper, with flowers' },
+  { href: '/dashboard', icon: 'dashboard', label: 'Visitor Dashboard', note: 'Hit counter & hall of fame' },
+  { href: '/guestbook', icon: 'guestbook', label: 'Guestbook', note: 'Leave me a note' },
+  { href: '/personalize', icon: 'personalize', label: 'Personalize', note: 'Colours, screensaver, sounds' },
+];
+const places = [
+  { href: '/about', label: site.firstName },
+  { href: '/projects', label: 'Projects' },
+  { href: '/research', label: 'Research' },
+  { href: '/writing', label: 'Writing' },
+  { href: '/experience', label: 'Experience' },
+  { href: '/contact', label: 'Contact' },
+  { href: '/music', label: 'Music' },
+  { href: '/personalize', label: 'Control Panel' },
+];
+const external = site.socials.filter((s) => s.url.startsWith('http'));
+const dock = [
+  { href: '/projects', icon: 'folder', label: 'Projects' },
+  { href: '/resume', icon: 'resume', label: 'Résumé' },
+  { href: '/contact', icon: 'mail', label: 'Contact' },
+  { href: '/terminal', icon: 'terminal', label: 'Terminal' },
+];
+---
+
+<nav class="taskbar" aria-label="Taskbar">
+  <button class="orb" type="button" id="orb" aria-label="Start" aria-expanded="false" aria-controls="startmenu" title="Start">
+    <img src="/icons/orb.svg" alt="" width="48" height="48" />
+  </button>
+  <div class="tasks" id="tasks" role="toolbar" aria-label="Open windows"></div>
+  <div class="dock">
+    {
+      dock.map((d) => (
+        <a href={d.href} aria-label={d.label} title={d.label}>
+          <img src={`/icons/${d.icon}.svg`} alt="" />
+        </a>
+      ))
+    }
+  </div>
+  <div class="tray">
+    <div class="tray-icons" aria-hidden="true">
+      <svg viewBox="0 0 16 16" fill="#fff"><rect x="1" y="11" width="3" height="4" /><rect x="5" y="8" width="3" height="7" /><rect x="9" y="5" width="3" height="10" /><rect x="13" y="2" width="2" height="13" opacity=".5" /></svg>
+    </div>
+    <button class="tray-btn muted" type="button" id="sound-toggle" aria-label="Startup sound" aria-pressed="false" title="Startup sound: off">
+      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"
+        ><path d="M2 6h3l4-3v10L5 10H2z" fill="#fff" /><path class="waves" d="M11 5q2 3 0 6M12.5 3.5q3.5 4.5 0 9" stroke="#fff" fill="none" stroke-width="1.3" /><path
+          class="mute"
+          d="M11 6l4 4M15 6l-4 4"
+          stroke="#ff8a9a"
+          stroke-width="1.6"
+          stroke-linecap="round"></path></svg
+      >
+    </button>
+    <button class="tray-clock" type="button" id="tray-clock" aria-expanded="false" aria-controls="clock-flyout" aria-label="Clock, time zones and weather">
+      <time id="tray-time">--:--</time>
+      <time id="tray-date"></time>
+    </button>
+    <button class="show-desktop" type="button" id="show-desktop" aria-label="Show desktop" title="Show desktop"></button>
+  </div>
+</nav>
+
+<div class="flyout" id="clock-flyout" role="dialog" aria-label="Time and weather" hidden>
+  <div class="fo-clocks">
+    <div class="fo-clock">
+      <span class="fo-label pixel">your time</span>
+      <b id="fo-you">--:--</b>
+      <small id="fo-you-zone"></small>
+    </div>
+    <div class="fo-clock ist">
+      <span class="fo-label pixel">{site.firstName.toLowerCase()} · IST</span>
+      <b id="fo-ist">--:--</b>
+      <small id="fo-ist-date">India</small>
+    </div>
+  </div>
+  <p class="fo-diff" id="fo-diff"></p>
+  <div class="fo-weather" id="fo-weather">
+    <img id="fo-wicon" src="/pixels/w-cloud.svg" alt="" width="48" height="48" />
+    <div>
+      <b id="fo-temp">--°</b>
+      <span id="fo-desc">checking the sky…</span>
+      <small id="fo-place"></small>
+    </div>
+  </div>
+  <button class="btn" type="button" id="fo-locate" hidden>📍 Show weather for my location</button>
+  <div class="fo-cal" id="fo-cal" aria-label="Calendar"></div>
+  <p class="fo-foot">weather by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a></p>
+</div>
+
+<div class="startmenu" id="startmenu" hidden role="dialog" aria-label="Start menu">
+  <div class="sm-left">
+    <div id="sm-pinned">
+      {
+        pinned.map((p) => (
+          <a class="sm-item" href={p.href}>
+            <img src={`/icons/${p.icon}.svg`} alt="" />
+            <span>
+              {p.label}
+              <small>{p.note}</small>
+            </span>
+          </a>
+        ))
+      }
+      <div class="sm-sep"></div>
+      <a class="sm-item" href="/recycle-bin"><img src="/icons/recycle.svg" alt="" /><span>Recycle Bin<small>Abandoned ideas</small></span></a>
+    </div>
+    <div id="sm-results" hidden></div>
+  </div>
+  <div class="sm-search">
+    <input type="search" id="sm-input" placeholder="Search projects, notes and more" aria-label="Search the site" autocomplete="off" />
+    <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6.5" cy="6.5" r="4.5" fill="none" stroke="#5b6b85" stroke-width="2" /><path d="M10 10l4 4" stroke="#5b6b85" stroke-width="2" stroke-linecap="round" /></svg>
+  </div>
+  <div class="sm-right">
+    <img class="sm-avatar" src="/avatar.svg" alt="" width="64" height="64" />
+    {places.map((p) => <a class="sm-link" href={p.href}>{p.label}</a>)}
+    <div class="sm-sep" style="background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent)"></div>
+    {
+      external.map((s) => (
+        <a class="sm-link" href={s.url} target="_blank" rel="noopener">
+          {s.label} ↗
+        </a>
+      ))
+    }
+    <span class="grow"></span>
+    <button class="sm-shutdown" type="button" id="shutdown">Shut down</button>
+  </div>
+</div>

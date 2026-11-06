@@ -1,0 +1,21 @@
+---
+import Window from '../Window.astro';
+const { open } = Astro.props;
+---
+
+<Window id="games" title="Pixel Pairs" icon="game" url="/games" open={open} w={420} h={600}>
+  <div class="game">
+    <div class="game-hud">
+      <span>moves: <b id="pp-moves">0</b></span>
+      <span>pairs: <b id="pp-pairs">0</b>/8</span>
+    </div>
+    <div class="board" id="pp-board" aria-label="Memory game board"></div>
+    <p class="game-msg" id="pp-msg" aria-live="polite">find all the pairs!</p>
+    <div class="arcade-submit" id="pp-submit" hidden></div>
+    <div class="sw-tools">
+      <button class="btn" type="button" id="pp-new">New game</button>
+      <a class="btn" href="/dashboard">🏆 Hall of fame</a>
+    </div>
+    <noscript>This little game needs JavaScript.</noscript>
+  </div>
+</Window>

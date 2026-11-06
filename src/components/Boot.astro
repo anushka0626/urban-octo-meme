@@ -1,0 +1,364 @@
+---
+import { site } from '../data/site';
+---
+
+<div id="boot" class="boot" role="dialog" aria-label="Starting up">
+  <div class="boot-stage boot-term" data-stage="term">
+    <pre id="boot-log" aria-hidden="true"></pre>
+  </div>
+
+  <div class="boot-stage boot-orb" data-stage="orb" hidden>
+    <div class="orb-assemble" aria-hidden="true">
+      <span class="light l1"></span><span class="light l2"></span><span class="light l3"></span><span class="light l4"></span>
+      <img src="/icons/orb.svg" alt="" width="96" height="96" />
+    </div>
+    <p class="boot-starting">Starting {site.firstName}'s PC</p>
+    <p class="boot-copy">© 2009 – {new Date().getFullYear()} · made with nostalgia &amp; Linux</p>
+  </div>
+
+  <div class="boot-stage boot-login" data-stage="login" hidden>
+    <div class="login-card">
+      <div class="login-tile"><img src="/avatar.svg" alt="" width="128" height="128" /></div>
+      <p class="login-name">{site.firstName}</p>
+      <button class="login-go" type="button" id="login-go">
+        <span>Click to sign in</span>
+        <span class="login-arrow" aria-hidden="true">➜</span>
+      </button>
+      <div class="login-welcome" hidden>
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Welcome</span>
+      </div>
+    </div>
+    <p class="login-brand pixel">my first internet</p>
+  </div>
+
+  <button class="boot-skip" type="button" id="boot-skip">skip intro ›</button>
+</div>
+
+<style is:global>
+  .boot {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: none;
+    background: #0b0d14;
+    color: #e8ecf5;
+    font-family: var(--font-ui);
+  }
+  html.booting .boot {
+    display: block;
+  }
+  html.booting .desktop,
+  html.booting .taskbar {
+    visibility: hidden;
+  }
+  .boot.fade-out {
+    animation: boot-fade 0.6s ease forwards;
+  }
+  @keyframes boot-fade {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  .boot-stage {
+    position: absolute;
+    inset: 0;
+  }
+  .boot-stage[hidden] {
+    display: none;
+  }
+
+  /* stage 1: linux-ish boot log (now) */
+  .boot-term pre {
+    margin: 0;
+    padding: 24px 28px;
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #c8cfdd;
+    white-space: pre-wrap;
+  }
+  .boot-term .ok {
+    color: #7be495;
+  }
+  .boot-term .hl {
+    color: var(--pink);
+  }
+  .boot-term .dim {
+    color: #6b7488;
+  }
+  .boot.glitch .boot-term {
+    animation: glitch 0.45s steps(2) forwards;
+  }
+  @keyframes glitch {
+    0% {
+      transform: none;
+      filter: none;
+    }
+    30% {
+      transform: translateX(-8px) skewX(8deg);
+      filter: drop-shadow(4px 0 #ff4f9a) drop-shadow(-4px 0 #3ad7ff);
+    }
+    60% {
+      transform: translateX(6px) skewX(-6deg);
+      filter: drop-shadow(-6px 0 #ff4f9a) drop-shadow(6px 0 #3ad7ff) brightness(2);
+      clip-path: inset(30% 0 40% 0);
+    }
+    100% {
+      opacity: 0;
+      clip-path: inset(50% 0 50% 0);
+    }
+  }
+
+  /* stage 2: glowing orb (then) */
+  .boot-orb {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+  }
+  .orb-assemble {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    display: grid;
+    place-items: center;
+  }
+  .orb-assemble img {
+    width: 96px;
+    height: 96px;
+    opacity: 0;
+    animation: orb-in 0.7s 1.05s var(--ease-out) forwards;
+  }
+  @keyframes orb-in {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+      filter: brightness(3) drop-shadow(0 0 30px #9ef0ff);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+      filter: drop-shadow(0 0 22px rgba(120, 200, 255, 0.6));
+    }
+  }
+  .light {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    margin: -7px;
+    border-radius: 3px;
+    box-shadow: 0 0 16px 4px currentColor;
+    background: currentColor;
+    animation: swirl 1.2s var(--ease-out) forwards;
+  }
+  .l1 {
+    color: var(--pink);
+    --sx: -140px;
+    --sy: -60px;
+  }
+  .l2 {
+    color: var(--green);
+    --sx: 140px;
+    --sy: -80px;
+  }
+  .l3 {
+    color: var(--yellow);
+    --sx: -120px;
+    --sy: 90px;
+    animation-delay: 0.08s;
+  }
+  .l4 {
+    color: #7cc0ff;
+    --sx: 130px;
+    --sy: 70px;
+    animation-delay: 0.08s;
+  }
+  @keyframes swirl {
+    0% {
+      transform: translate(var(--sx), var(--sy)) rotate(0deg) scale(0.6);
+      opacity: 0;
+    }
+    30% {
+      opacity: 1;
+    }
+    85% {
+      transform: translate(0, 0) rotate(270deg) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(0, 0) rotate(360deg) scale(0.2);
+      opacity: 0;
+    }
+  }
+  .boot-starting {
+    margin: 28px 0 0;
+    font-size: 19px;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    opacity: 0;
+    animation: fade-in 0.6s 0.9s forwards;
+  }
+  .boot-copy {
+    position: absolute;
+    bottom: 28px;
+    margin: 0;
+    font-size: 12px;
+    color: #6b7488;
+  }
+  @keyframes fade-in {
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* stage 3: login (the warm welcome) */
+  .boot-login {
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(ellipse at 50% 40%, rgba(255, 255, 255, 0.25), transparent 60%),
+      linear-gradient(rgba(30, 80, 160, 0.45), rgba(30, 80, 160, 0.25)),
+      url('/wallpapers/day.svg') center / cover;
+    animation: fade-in-from 0.6s ease;
+  }
+  @keyframes fade-in-from {
+    from {
+      opacity: 0;
+    }
+  }
+  .login-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .login-tile {
+    padding: 10px;
+    border-radius: 12px;
+    background: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.35));
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+      0 0 0 1px rgba(20, 50, 100, 0.35),
+      0 10px 30px rgba(20, 40, 90, 0.4);
+  }
+  .login-tile img {
+    display: block;
+    width: 128px;
+    height: 128px;
+    border-radius: 4px;
+    image-rendering: pixelated;
+  }
+  .login-name {
+    margin: 6px 0 4px;
+    font-size: 26px;
+    font-weight: 300;
+    color: #fff;
+    text-shadow: 0 1px 6px rgba(10, 30, 70, 0.6);
+  }
+  .login-go {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 4px 0 16px;
+    height: 34px;
+    border: 1px solid rgba(20, 40, 80, 0.6);
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--ink-soft);
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(20, 40, 90, 0.3);
+  }
+  .login-arrow {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 26px;
+    border-radius: 3px;
+    color: #fff;
+    background: linear-gradient(#8ccaff, #3a8ee6 50%, #1f6fcf 51%, #4ea3f2);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  }
+  .login-go:hover .login-arrow,
+  .login-go:focus-visible .login-arrow {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.7),
+      0 0 10px rgba(120, 200, 255, 0.95);
+  }
+  .login-welcome {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 24px;
+    font-weight: 300;
+    color: #fff;
+    text-shadow: 0 1px 6px rgba(10, 30, 70, 0.6);
+  }
+  .login-welcome[hidden] {
+    display: none;
+  }
+  .spinner {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .login-brand {
+    position: absolute;
+    bottom: 26px;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 16px;
+    text-shadow: 0 1px 4px rgba(10, 30, 70, 0.5);
+  }
+
+  .boot-skip {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
+    padding: 6px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .boot-skip:hover {
+    background: rgba(255, 255, 255, 0.18);
+  }
+  .boot[data-at='login'] .boot-skip {
+    display: none;
+  }
+
+  .shutdown {
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(#1f5fae, #3a8ee6);
+    color: #fff;
+    font-size: 22px;
+    font-weight: 300;
+    animation: fade-in-from 0.3s ease;
+  }
+  .shutdown div {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+</style>

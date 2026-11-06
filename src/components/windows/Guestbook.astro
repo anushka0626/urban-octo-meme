@@ -1,0 +1,276 @@
+---
+import Window from '../Window.astro';
+import { site } from '../../data/site';
+import { NOTE_COLORS, PALETTE, LIMITS } from '../../data/guestbook';
+const { open } = Astro.props;
+---
+
+<Window id="guestbook" title="Guestbook" icon="guestbook" url="/guestbook" open={open} w={760} h={600}>
+  <div class="win-toolbar" slot="toolbar">
+    <button class="btn" type="button" id="gb-sign" aria-expanded="false" aria-controls="gb-compose" style="padding:3px 12px">
+      ✎ Sign the guestbook
+    </button>
+    <span class="gb-count" id="gb-count"></span>
+  </div>
+  <div class="gb">
+    <form class="gb-compose" id="gb-compose" hidden autocomplete="off">
+      <div class="gb-paint">
+        <canvas id="gb-canvas" width="16" height="16" aria-label="16 by 16 pixel drawing canvas"></canvas>
+        <div class="gb-palette" role="radiogroup" aria-label="Brush colour">
+          {
+            PALETTE.map((c, i) => (
+              <button
+                type="button"
+                class="gb-swatch"
+                role="radio"
+                data-ink={i}
+                aria-checked={i === 1 ? 'true' : 'false'}
+                aria-label={i === 0 ? 'Eraser' : `Colour ${i}`}
+                style={i === 0 ? '' : `--c:${c}`}
+              >
+                {i === 0 ? '⌫' : ''}
+              </button>
+            ))
+          }
+        </div>
+        <button type="button" class="btn" id="gb-clear" style="padding:2px 10px;font-size:12px">Clear</button>
+      </div>
+      <div class="gb-fields">
+        <p class="eyebrow" style="margin:0">draw something (optional) &amp; leave a note</p>
+        <input name="name" required maxlength={LIMITS.name} placeholder="Your name" aria-label="Your name" />
+        <textarea name="message" maxlength={LIMITS.message} placeholder={`Say hi to ${site.firstName}…`} aria-label="Message"></textarea>
+        <input class="gb-hp" name="website" tabindex="-1" aria-hidden="true" />
+        <div class="gb-colors" role="radiogroup" aria-label="Note colour">
+          {
+            NOTE_COLORS.map((c, i) => (
+              <label class={`gb-cdot note-${c}`}>
+                <input type="radio" name="color" value={c} checked={i === 0} />
+                <span class="sr-only">{c}</span>
+              </label>
+            ))
+          }
+        </div>
+        <div class="gb-actions">
+          <button class="btn primary" type="submit">📌 Pin it!</button>
+          <span class="gb-status" id="gb-status" aria-live="polite"></span>
+        </div>
+      </div>
+    </form>
+
+    <div class="gb-board" id="gb-board">
+      <article class="note note-pink pinned">
+        <p>hi! thanks for visiting my little corner of the internet ✿ leave a note, draw me something, or just say hi.</p>
+        <footer>— {site.firstName}</footer>
+      </article>
+    </div>
+    <p class="gb-offline muted" id="gb-offline" hidden>The guestbook is being set up. Check back soon!</p>
+  </div>
+</Window>
+
+<style is:global>
+  .gb {
+    min-height: 100%;
+    padding: 16px;
+    background:
+      radial-gradient(circle at 1px 1px, rgba(120, 90, 60, 0.12) 1px, transparent 0) 0 0 / 14px 14px,
+      linear-gradient(#f6ecdc, #efe1ca);
+    font-family: var(--font-body);
+  }
+  .gb-count {
+    font-size: 12.5px;
+    color: #1d2433;
+    text-shadow: 0 0 6px #fff;
+  }
+  .gb-compose {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 18px;
+    padding: 14px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(80, 60, 30, 0.12);
+  }
+  .gb-compose[hidden] {
+    display: none;
+  }
+  .gb-paint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  #gb-canvas {
+    width: 176px;
+    height: 176px;
+    image-rendering: pixelated;
+    touch-action: none;
+    border-radius: 4px;
+    background:
+      repeating-conic-gradient(#f1f3f8 0 25%, #fff 0 50%) 0 0 / 22px 22px;
+    box-shadow: 0 0 0 1px #c5ccd9;
+  }
+  .gb-palette {
+    display: grid;
+    grid-template-columns: repeat(9, 18px);
+    gap: 2px;
+  }
+  .gb-swatch {
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    border: 1px solid #9aa4b8;
+    border-radius: 3px;
+    background: var(--c, #fff);
+    font-size: 10px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .gb-swatch[aria-checked='true'] {
+    outline: 2px solid var(--aero);
+    outline-offset: 1px;
+  }
+  .gb-fields {
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .gb-fields input,
+  .gb-fields textarea {
+    font: inherit;
+    font-size: 14px;
+    padding: 8px 10px;
+    border: 1px solid #c5ccd9;
+    border-radius: 6px;
+  }
+  .gb-fields textarea {
+    min-height: 74px;
+    resize: vertical;
+  }
+  .gb-hp {
+    position: absolute;
+    left: -9999px;
+  }
+  .gb-colors {
+    display: flex;
+    gap: 8px;
+  }
+  .gb-cdot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+  }
+  .gb-cdot input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .gb-cdot:has(input:checked) {
+    outline: 2px solid var(--aero);
+    outline-offset: 2px;
+  }
+  .gb-cdot:has(input:focus-visible) {
+    outline: 2px dashed var(--aero);
+    outline-offset: 2px;
+  }
+  .gb-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .gb-status {
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  .gb-board {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 18px;
+    align-items: start;
+  }
+  .note {
+    position: relative;
+    padding: 14px 12px 10px;
+    border-radius: 2px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.7) inset,
+      0 6px 12px rgba(80, 60, 30, 0.2);
+    transform: rotate(var(--rot, -1.5deg));
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: #3a3220;
+    overflow-wrap: anywhere;
+    animation: note-in 0.3s var(--ease-out);
+  }
+  .note::before {
+    content: '';
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    margin-left: -7px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ffb3d1, #d9418a);
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+  }
+  .note p {
+    margin: 0 0 8px;
+  }
+  .note canvas {
+    display: block;
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 8px;
+    image-rendering: pixelated;
+  }
+  .note footer {
+    font-family: var(--font-pixel);
+    font-size: 13px;
+    color: #6b5a3a;
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .note footer time {
+    opacity: 0.7;
+  }
+  .note .pending {
+    display: block;
+    margin-top: 6px;
+    font-size: 11.5px;
+    color: var(--pink-deep);
+  }
+  .note-yellow {
+    background: linear-gradient(#fff6b8, #ffe98a);
+  }
+  .note-pink {
+    background: linear-gradient(#ffe0ef, #ffc4e0);
+  }
+  .note-blue {
+    background: linear-gradient(#e2f1ff, #c6e2ff);
+  }
+  .note-green {
+    background: linear-gradient(#e6fbe9, #c8f2d0);
+  }
+  .note-lavender {
+    background: linear-gradient(#efe9ff, #dcd1ff);
+  }
+  @keyframes note-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px) rotate(0deg);
+    }
+  }
+  .gb-offline {
+    margin: 18px 0 0;
+    text-align: center;
+    font-size: 13.5px;
+  }
+</style>

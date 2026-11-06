@@ -1,0 +1,107 @@
+@import '@fontsource-variable/open-sans';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
+@import '@fontsource/pixelify-sans/400.css';
+@import '@fontsource/pixelify-sans/600.css';
+
+:root {
+  /* palette */
+  --aero: #3a8ee6;
+  --aero-deep: #1f5fae;
+  --sky: #bfe3ff;
+  --lavender: #c9b8ff;
+  --pink: #ff9ecf;
+  --pink-deep: #d9418a;
+  --green: #b6f0c2;
+  --green-deep: #2f9a52;
+  --yellow: #ffe27a;
+  --ink: #1d2433;
+  --ink-soft: #4a5468;
+  --ink-faint: #7a8499;
+  --paper: #ffffff;
+  --paper-2: #f5f8fd;
+  --line: #dde4ef;
+
+  /* glass */
+  --glass: rgba(214, 230, 255, 0.55);
+  --glass-strong: rgba(214, 230, 255, 0.78);
+  --glass-tint: 120, 160, 230; /* window colour (Personalize) */
+  --glass-alpha: 0.42; /* colour intensity (Personalize) */
+  --bar-tint: 28, 52, 98;
+  --glass-edge: rgba(20, 40, 80, 0.55);
+
+  /* type */
+  --font-ui: 'Segoe UI', 'Open Sans Variable', system-ui, sans-serif;
+  --font-body: 'Inter Variable', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+  --font-pixel: 'Pixelify Sans', var(--font-mono);
+
+  --taskbar-h: 42px;
+  --radius: 8px;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--ink);
+  background: #7fbfff;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+}
+
+a {
+  color: var(--aero-deep);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--aero);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.pixel {
+  font-family: var(--font-pixel);
+  letter-spacing: 0.02em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

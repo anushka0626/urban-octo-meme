@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+<defs>
+<linearGradient id="sky" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#101a3d"/><stop offset=".55" stop-color="#2a2d6e"/><stop offset=".85" stop-color="#5b4a9e"/><stop offset="1" stop-color="#a26bb5"/></linearGradient>
+<linearGradient id="sw" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7cc0ff" stop-opacity="0"/><stop offset=".5" stop-color="#7cc0ff" stop-opacity=".35"/><stop offset="1" stop-color="#ff9ecf" stop-opacity="0"/></linearGradient>
+<filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+<filter id="blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="22"/></filter>
+</defs>
+<rect width="1920" height="1080" fill="url(#sky)"/>
+<g filter="url(#soft)"><path d="M-100 820 C 400 600, 900 980, 1400 700 S 2000 560, 2100 600 L2100 680 C 1900 640, 1700 760, 1400 800 S 500 760, -100 900Z" fill="url(#sw)"/></g>
+<circle cx="1500" cy="260" r="120" fill="#fff6c9" opacity=".25" filter="url(#blur)"/>
+<g shape-rendering="crispEdges" fill="#fff6c9" transform="translate(1452 212) scale(8)"><rect x="3" y="0" width="6" height="1"/><rect x="1" y="1" width="10" height="2"/><rect x="0" y="3" width="12" height="6"/><rect x="1" y="9" width="10" height="2"/><rect x="3" y="11" width="6" height="1"/><rect x="7" y="4" width="2" height="2" fill="#e8dca0"/><rect x="3" y="7" width="2" height="1" fill="#e8dca0"/></g>
+<g fill="#fff" shape-rendering="crispEdges">
+<rect x="200" y="120" width="4" height="4"/><rect x="420" y="260" width="3" height="3"/><rect x="700" y="90" width="4" height="4"/><rect x="900" y="320" width="3" height="3"/><rect x="1120" y="160" width="4" height="4"/><rect x="1280" y="420" width="3" height="3"/><rect x="1700" y="120" width="4" height="4"/><rect x="1820" y="320" width="3" height="3"/><rect x="1000" y="520" width="3" height="3"/><rect x="560" y="480" width="3" height="3"/><rect x="1650" y="560" width="3" height="3"/><rect x="300" y="420" width="3" height="3"/>
+<g transform="translate(820 200)"><rect x="4" y="0" width="4" height="12"/><rect x="0" y="4" width="12" height="4"/></g>
+<g transform="translate(1760 460)" fill="#ffc6e4"><rect x="3" y="0" width="3" height="9"/><rect x="0" y="3" width="9" height="3"/></g>
+</g>
+</svg>

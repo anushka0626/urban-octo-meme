@@ -1,0 +1,30 @@
+---
+import Window from '../Window.astro';
+import { site } from '../../data/site';
+const { open } = Astro.props;
+---
+
+<Window
+  id="terminal"
+  title={`${site.handle}@${site.host}:~`}
+  icon="terminal"
+  url="/terminal"
+  open={open}
+  w={680}
+  h={440}
+  dark
+>
+  <div class="term" id="term">
+    <div class="term-out" id="term-out" aria-live="polite">
+      <noscript>This terminal needs JavaScript. Everything it can show is also in the desktop folders.</noscript>
+    </div>
+    <form class="term-line" id="term-form" autocomplete="off">
+      <label for="term-input" class="term-prompt">
+        <span class="t-user">{site.handle}</span><span class="t-dim">@</span><span class="t-host">{site.host}</span><span
+          class="t-dim">:</span
+        ><span class="t-path" id="term-cwd">~</span><span class="t-dim">$</span>
+      </label>
+      <input class="term-input" id="term-input" type="text" spellcheck="false" autocapitalize="off" aria-label="Terminal command" />
+    </form>
+  </div>
+</Window>
